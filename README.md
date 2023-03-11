@@ -1,11 +1,44 @@
-### Book List
+## Book list in this Project
 
-`여기에 없는건 노션에 있음`
+|     Structure      |
+|:------------------:|
+|   도메인 주도 개발 시작하기   |
+|   도메인 주도 설계 첫글음    |
+| Clean Architecture |
 
-- Head First Design Pattern
-- 도메인 주도 개발 시작하기
-- 도메인 주도 설계 첫글음
-- Clean Architecture
+|          Coding           |
+|:-------------------------:|
+| Head First Design Pattern |
+
+## Book list in Notion
+
+|         Structure         |
+|:-------------------------:|
+|     데이터 중심 애플리케이션 설계      |
+| The progmatic Programmer  |
+|    클린코드를 위한 테스트 주도 개발     |
+| 소프트웨어 아키텍처 The Hard Parts |
+|      소프트웨어 아키텍처 101       |
+
+|        Coding         |
+|:---------------------:|
+|         오브젝트          |
+|      파이썬 코딩의 기술       |
+|      전문가를 위한 파이썬      |
+|       파이썬 클린코드        |
+|     객체지향의 사실과 오해      |
+|        단단한 파이썬        |
+| 파이썬 비동기 라이브러리 Asyncio |
+
+|          Network          |
+|:-------------------------:|
+| 성공과 실패를 결정하는 1%의 네이트워크 원리 |
+|    그림으로 공부하는 IT 인프라 구조    |
+
+|     DataBase     |
+|:----------------:|
+|    Real MySQL    |
+| 그림으로 공부하는 오라클 구조 |
 
 ### 찾는 방법
 
