@@ -13,7 +13,7 @@ def purchase_without_di():
 
 def purchase_with_di():
     payment_type = 'toss'
-    payment_factory: PaymentFactory = PaymentFactoryImpl()
+    payment_factory: PaymentFactory = PaymentFactoryImpl() # 어쩔 수 없이 포함하게 되는 구체 컴포넌트
     payment = payment_factory.create_payment(payment_type)
     payment.pay()
 
