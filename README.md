@@ -6,11 +6,12 @@
 |   도메인 주도 설계 첫걸음    |
 | Clean Architecture |
 |    켄트 벡의 구현 패턴     |
-|   소프트웨어 아키텍처 101   |
 
 |          Coding           |
 |:-------------------------:|
 | Head First Design Pattern |
+|   소프트웨어 아키텍처 101   |
+
 
 ## Book list in Notion
 
