@@ -314,5 +314,7 @@ fabric.properties
 Python3.9/crawling
 .idea
 Python3.9/test.py
+src/main/kotlin/Main.kt
+
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Python,Kotlin,PyCharm,Intellij
