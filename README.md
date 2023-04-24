@@ -5,12 +5,13 @@
 |   도메인 주도 개발 시작하기   |
 |   도메인 주도 설계 첫걸음    |
 | Clean Architecture |
-|    켄트 벡의 구현 패턴     |
 
 |          Coding           |
 |:-------------------------:|
 | Head First Design Pattern |
-|   소프트웨어 아키텍처 101   |
+|      소프트웨어 아키텍처 101       |
+|        켄트 벡의 구현 패턴        |
+|           클린코드            |
 
 
 ## Book list in Notion
