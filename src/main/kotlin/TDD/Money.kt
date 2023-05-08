@@ -1,27 +1,38 @@
 package TDD
 
-import java.util.Currency
-
-abstract class Money(
-    protected val amount: Int,
-    protected val currency: String
-) {
+open class Money(
+    val amount: Int, val currency: String
+) : Expression {
 
     companion object {
-        fun dollar(amount: Int): Dollar {
-            return Dollar(amount, "USD")
+        fun dollar(amount: Int): Money {
+            return Money(amount, "USD")
         }
 
-        fun franc(amount: Int): Franc {
-            return Franc(amount, "CHF")
+        fun franc(amount: Int): Money {
+            return Money(amount, "CHF")
         }
     }
 
     override fun equals(other: Any?): Boolean {
         val money: Money = other as Money
-        return javaClass.equals(money.javaClass) && money.amount == amount
+        return money.amount == amount && currency().equals(money.currency())
     }
 
-    abstract fun times(multiplier: Int): Money
-    abstract fun currency(): String
+    override fun times(multiplier: Int): Expression {
+        return Money(amount * multiplier, currency)
+    }
+
+    override fun plus(addend: Expression): Expression {
+        return Sum(this, addend)
+    }
+
+    fun currency(): String {
+        return currency
+    }
+
+    override fun reduce(bank: Bank, to: String): Money {
+        val rate = bank.rate(currency, to)
+        return Money(amount / rate, to)
+    }
 }
