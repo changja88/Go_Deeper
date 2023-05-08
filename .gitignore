@@ -311,9 +311,9 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-Python3.9/crawling
+Python3.10/crawling
 .idea
-Python3.9/test.py
+Python3.10/test.py
 src/main/kotlin/Main.kt
 
 
