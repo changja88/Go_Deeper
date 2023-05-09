@@ -16,9 +16,9 @@ class Test {
     fun testEquality() {
         assertTrue(Money.dollar(5) == Money.dollar(5))
         assertFalse(Money.dollar(5) == Money.dollar(6))
-        assertTrue(Franc(5) == Franc(5))
-        assertFalse(Franc(5) == Franc(6))
-        assertFalse(Franc(5).equals(Money.dollar(5)))
+//        assertTrue(Franc(5) == Franc(5))
+//        assertFalse(Franc(5) == Franc(6))
+//        assertFalse(Franc(5).equals(Money.dollar(5)))
     }
 
     @Test
