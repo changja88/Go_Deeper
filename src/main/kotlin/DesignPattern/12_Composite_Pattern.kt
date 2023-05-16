@@ -76,11 +76,11 @@ class Menu(
     val menuComponents = ArrayList<MenuComponent>()
 
     override fun add(menuComponent: MenuComponent) {
-        menuComponents!!.add(menuComponent)
+        menuComponents.add(menuComponent)
     }
 
     override fun remove(menuComponent: MenuComponent) {
-        menuComponents!!.remove(menuComponent)
+        menuComponents.remove(menuComponent)
     }
 
     override fun print() {
