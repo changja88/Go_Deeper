@@ -2,7 +2,7 @@
 <module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Python" name="Python">
-      <configuration sdkName="Python 3.10 (default)" />
+      <configuration sdkName="Python 3.10 (defalut)" />
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
@@ -16,7 +16,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
-    <orderEntry type="library" name="Python 3.10 (default) interpreter library" level="application" />
     <orderEntry type="library" name="junit.jupiter" level="project" />
+    <orderEntry type="library" name="Python 3.10 (defalut) interpreter library" level="application" />
   </component>
 </module>
