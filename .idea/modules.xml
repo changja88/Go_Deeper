@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Go_Deeper.iml" filepath="$PROJECT_DIR$/Go_Deeper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Python/python.iml" filepath="$PROJECT_DIR$/Python/python.iml" />
     </modules>
   </component>
 </project>
