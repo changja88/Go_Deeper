@@ -135,7 +135,7 @@ def notify_by_email(employees: Sequence[Employee],
                     overrides: Mapping[str, str]) -> None: ...
 ```
 
-- 제네릭은 TypeVar라는 typing에서 제공되는 새로운 팩토리를 사용하여 매겨 변수화될 수 있다
+- 제네릭은 TypeVar라는 typing에서 제공되는 새로운 팩토리를 사용하여 매개 변수화될 수 있다
 
 ```python
 from collections.abc import Sequence
@@ -147,3 +147,104 @@ T = TypeVar('T')  # 형 변수를 선언합니다
 def first(l: Sequence[T]) -> T:  # 제네릭 함수
     return l[0]
 ```
+
+### 사용자 정의 제네릭 형
+
+- 사용자 정의 클래스는 제네릭 클래스로 정의 할 수 있다
+
+```python
+from typing import TypeVar, Generic
+from logging import Logger
+
+T = TypeVar('T')
+
+
+class LoggedVar(Generic[T]):
+    def __init__(self, value: T, name: str, logger: Logger) -> None:
+        self.name = name
+        self.logger = logger
+        self.value = value
+
+    def set(self, new: T) -> None:
+        self.log('Set ' + repr(self.value))
+        self.value = new
+
+    def get(self) -> T:
+        self.log('Get ' + repr(self.value))
+        return self.value
+
+    def log(self, message: str) -> None:
+        self.logger.info('%s: %s', self.name, message)
+```
+
+- 사용자 정의 제네릭 형 에일리어스도 지원한다
+
+```python
+from collections.abc import Iterable
+from typing import TypeVar, Union
+
+S = TypeVar('S')
+Response = Union[Iterable[S], int]
+
+
+# 여기서 반환형은 Union[Iterable[str], int]와 같습니다
+def response(query: str) -> Response[str]:
+    ...
+
+
+T = TypeVar('T', int, float, complex)
+Vec = Iterable[tuple[T, T]]
+
+
+def inproduct(v: Vec[T]) -> T:  # Iterable[tuple[T, T]]와 같습니다
+    return sum(x * y for x, y in v)
+```
+
+### Any 형
+
+- 특수한 종류의 형으로 Any가 있다. 정적형 검사기는 모든 형을 Any와 호환되는 것으로, Any를 모든 형과 호환되는 것으로 취급한다
+- 이는 Any형의 값에 대해 어떤 연산이나 메서드 호출을 할 수 있고, 그것을 임의의 변수에 대입 할 수 있음을 의미한다
+- Any형의 값을 보다 구체적인 형에 대입할 때 형 검사기가 수행되지 않음을 주의해야 한다
+- 또한 반환형이나 매개 변수 형이 없는 모든 함수는 묵시적으로 Any기본값을 사용한다 (아래코드)
+- 동적으로 형이 지정되는 코드와 정적으로 형이 지정된느 코드를 혼합해야 할 때 Any를 탈출구로 사용할 수 있다
+
+```python
+def legacy_parser(text):
+    ...
+    return data
+
+
+# 정적 형 검사기는 위의 것이 다음과 같은 서명을 가진 것으로 취급합니다:
+def legacy_parser(text: Any) -> Any:
+    ...
+    return data
+```
+
+- Any와 유사하게 모든 형은 object의 서브 형이다. 그러나 Any와는 달리 object는 모든 형의 서브형이 아니다
+- 값의 형이 object일 때, 형 검사기가 그것에 대한 거의 모든 연산을 거부하고, 그것을 더 특수한 형의 변수에 대입하는 것이 형 에러임을 의미한다
+- `값이 형 안전한 방식으로 모든 형이 될 수 있음을 표시하려면 object를 사용하면 좋다. 값이 동적으로 형지정됨을 표시하려면 Any를 사용하면 좋다`
+
+```python
+def hash_a(item: object) -> int:
+    # 실패; object에는 'magic' 메서드가 없습니다. 있으면 통과 
+    item.magic()
+    ...
+
+
+def hash_b(item: Any) -> int:
+    # 형 검사 통과
+    item.magic()
+    ...
+
+
+# 형 검사 통과, int와 str이 object의 서브 클래스이기 때문
+hash_a(42)
+hash_a("foo")
+
+# 형 검사 통과, Any가 모든 형과 호환되기 때문
+hash_b(42)
+hash_b("foo")
+```
+
+### 명목적 대 구조적 서브 타이핑
+- 
