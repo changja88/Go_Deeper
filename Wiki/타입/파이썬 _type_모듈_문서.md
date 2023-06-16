@@ -1,3 +1,32 @@
+## 인덱스
+
+- 형 에일리어스
+- NewType
+- Callable
+- 제네릭
+- 사용자 정의 제네릭형
+- Any형
+- 명목적 대 구조적 서브 타이핑
+- 모듈 내용
+    - 특수 타이핑 프리미티브
+        - 특수형
+        - 특수 형태
+        - 제네릭 형 구축하기
+        - 기타 특수 지시자
+    - 제테릭 구상 컬렉션
+        - 내장형에 해당하는 것들
+        - collections의 형에 해당하는 것들
+        - 기타 구상형
+    - 추상 베이스 클래스
+        - collections.abc의 컬렉션
+        - collections.abc의 기타 형에 해당하는 것들
+        - 비동기 프로그래밍
+        - 컨텍스트 관리자형
+    - 프로토콜
+    - 함수와 데코레이터
+    - 인트로스펙션 도우미
+    - 상수
+
 ## [파이썬 typing 모듈](https://python.flowdas.com/library/typing.html#)
 
 - 이 모듈은 PEP 484, PEP 526, PEP 544, PEP 586, PEP 589 및 PEP 591로 지정된 형 힌트에 대한 런타임 지원을 제공합니다. 가장 기본적인 지원은 형 Any, Union,
@@ -247,4 +276,139 @@ hash_b("foo")
 ```
 
 ### 명목적 대 구조적 서브 타이핑
-- 
+
+- 처음에는 PEP484가 파이썬 정적 형 시스템을 명목적 서브 타이핑(nominal subtyping)을 사용하는 것으로 정의했다
+    - 오직 A가 B의 서브 클래스일 때만 클래스 B가 기대되는 곳에 클래스 A가 혀용됨을 의미한다
+    - 이 접근 방식의 문제점은 명시적으로 클래스를 표시해야만 하는 것이다(파이썬 답지 않다)
+
+```python
+from collections.abc import Sized, Iterable, Iterator
+
+
+class Bucket(Sized, Iterable[int]):
+    def __len__(self) -> int: ...
+
+    def __iter__(self) -> Iterator[int]: ...
+```
+
+- PEP544 는 사용자가 클래스 정의에서 명시적인 베이스 클래스 없이 위의 코드를 작성할 수 있게 함으로써 파이썬 답게한다
+    - 정적 형 검사기가 Bucket을 Sized와 Iterable[int]의 서브 형으로 묵시적으로 취급하다
+    - 이런 방식을 structurl subtyping 또는 정적 타이핑 이라고 한다
+
+```python
+from collections.abc import Iterator, Iterable
+
+
+class Bucket:  # 참고: 베이스 클래스가 없습니다
+
+    def __len__(self) -> int: ...
+
+    def __iter__(self) -> Iterator[int]: ...
+
+
+def collect(items: Iterable[int]) -> int: ...
+
+
+result = collect(Bucket())  # 형 검사를 통과합니다
+```
+
+## 모듈 내용
+
+- 모듈은 다음 클래스, 함수 및 데코레이터를 정의한다
+
+### 특수 타이핑 프리미티브
+
+- 이들은 어노테이션에 형으로 사용할 수 있으며 []을 지원하지 않는다
+
+#### 특수형
+
+- Any
+    - 제한되지 않은 형을 나타내는 특수형
+    - 모든 형은 Any와 호환된다
+    - Any는 모든 혀오가 호환된다
+- NoReturn
+    - 함수가 절대 반환하지 않는 것을 나타내는 특수한 형
+  ```python
+  from typing import NoReturn
+
+  def stop() -> NoReturn:
+        raise RuntimeError('no way')
+  ```
+
+#### 특수형태
+
+- []을 사용하여 어노테이션에서 형으로 사용할 수 있고, 각기 고유한 문법을 가진다
+- Tuple(builtins.tuple은 이제 [])
+    - Tuple[X,Y]로 표시하며 빈 튜플의 형은 Tuple[()]로 쓸수 있다
+    - 가변 길이의 튜플을 지정하려면 리터럴 생략 부호를 사용한다 &rarr; Tuple[int,...]
+- Union
+    - 공동체형
+    - Union[X,Y]는 X또는 Y를 의미한다
+    - 인자는 형이어야 하며 적어도 하나는 있어야 한다
+    - 공용체의 공용체는 펼쳐진다 &rarr; Union[Union[int,str],flot] == Union[int,str,flot]
+    - 단일 인자의 공요체는 사라진다 &rarr; Union[int] == int
+    - 중복 인자는 건너 뛴다 &rarr; Union[int, str, int] == Union[int, str]
+    - 공용체를 비교할 때, 인자 순서가 무시된다 &rarr; Union[int, str] == Union[str, int]
+    - Optional[X]를 Union[X, None]의 줄임 표현으로 사용할 수 있다
+- Optional
+    - 선택적 형
+    - Optional[X]는 Union[X, None]과 동등하다
+    - 기본값을 갖는 선택적 인자와 같은 개념이 아니다
+- Collable(버전 3.9부터 폐지: collections.abc.Callable은 이제 []를 지원)
+    - Collable[[int], str] 은 (int) -> str 인 함수 이다
+    - 인자 리스트와 반환형 항상 정확의 두 종류의 값이 있어야 하며, 인자 리스트는 형의 리스터거나 생략부호(...), 반환형은 단일 형이어야 한ek
+- Type
+    - 넘어가자
+- Literal
+    - 대응하는 변수나 함수 매개 변수가 제공된 리터럴(또는 여러 리터럴 중 하나)과 동등한 값을 가짐을 형 검사기에 알리는데 사용할 수 있는 형
+
+```python
+# 예제 1
+def validate_simple(data: Any) -> Literal[True]:  # 항상 True를 반환합니다
+    return True  # 통과
+    return False  # 에러 
+
+
+# 예제 2
+MODE = Literal['r', 'rb', 'w', 'wb']
+
+
+def open_helper(file: str, mode: MODE) -> str:
+    ...
+
+
+open_helper('/some/path', 'r')  # 형 검사기를 통과합니다
+open_helper('/other/path', 'typo')  # 형 검사기에서 에러입니다
+```
+
+#### 제네릭 형 구축 하기
+
+#### 기타 특수 지시자
+
+### 제네릭 구상 컬렉션
+
+#### 내장형에 해당하는 것들
+
+#### collections의 형에 해당하는 것들
+
+#### 기타 구상형
+
+### 추상 베이스 클래스
+
+#### collections.abc의 컬렉션에 해당하는 것들
+
+#### collections.abc의 컬렉션의 기타 형에 해당하는 것들
+
+#### 비동기 프로그래밍
+
+#### 컨텍스트 관리자형
+
+#### 프로토콜
+
+#### 함수와 데코레이터
+
+#### 인트로스펙션 도우미
+
+#### 상수
+
+
