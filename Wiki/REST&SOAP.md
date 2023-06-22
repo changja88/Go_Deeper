@@ -1,35 +1,54 @@
-## REST/SOAP
-
-## REST (Representational State Transfer)
-
-- REST는 웹 서비스와 모바일 애플리케이션 경량화의 필요에 맞춘 아키텍처 원칙 세트이다
-- 데이터 요청이 REST API로 전성될 때는 일반적으로 하이퍼텍스트 전송 프로토콜(HTTP)을 통해 이루어진다
-- 이러한 요청을 수신하면 REST용으로 설계된 API(RESTful API 또는 RESTful 웹 서비스)가 HTML,XML, 일반 텍스트, JSON과 같은 다양한 형식으로 메시지를 반환할 수 있따
-- JSON(JavaScript Ojbect Notation)은 이름과 달리 어떠한 프로그래밍 언로든 읽을 수 있고, 인간과 기계가 모두 읽을 수 있으며, 경량화되어 있기 때문에 선호되는 메시지 형식이다
-- 이런 이유로 RESTful API는 보다 유연하고 설정하기 쉽다
-- 다음 6가지 아키텍처 가이드라인을 준수한 애플리케이션이 RESTful에 속한다
-    - 1.클라이언트, 서버, 리소스로 구성된 클라이언트-서버 아키텍처가 필요하다
-    - 2.요청이 통과하는 서버에 클라이언트 콘텐츠가 저장되지 않는 스테이트리스(stateless)클라이언트-서버 커뮤니케이션이 필요하다. 대신 세선의 상태에 대한 정보가 클라이언트에 저장된다
-    - 3.일부 클라이언트-서버 간 상호 작용의 필요성을 제거할 캐시 기능 데이터가 필요하다
-    - 4.애플리케이션 요구 사항별로 다른 형힉이 아닌, 표준화된 형식으로 정보를 전송할 수 있도록 구성 요소간 통합된 인터페이스가 필요하다. REST를 처음으로 제시한 Roy Fielding은 이를 "REST
-      아키텍처 스타일을 다른 네이트워크 기반 스타일과 차별화하는 핵심적인 기능"이라고 설명한다
-    - 5.클라이언트-서버 간의 상호 작용을 계층적으로 조정할 수 있도록 계층화된 시스템 제약이 필요하다
-    - 6.실행 가능한 코드를 전송해 서버가 클라이언트의 기능을 확장할 수있게 해주는 코드온디맨드가 필요하다. 단, 가시성이 감소할 수 있으므로 이는 선택적 가이드라인이다
-
 ## SOAP(Simple Object Access Protocol)
 
-- 다른 언어로 다른 플랫폼에서 빌드된 애플리케이션이 통신할 수 있도록 설계된 최초의 표준 프로토콜이다
-- 프로토콜이기 때문에 복잡성과 오버헤드를 증가시키는 빌트인 룰을 적용하므로, 페이지 로드 시간이 길어질 수 있다
-- 그러나 표준은 빌트인 컴플라이언스를 제공한다는 의미이므로, 기업에서 선호하는 방식이기도하다
-    - 빌트인 컴플라이언스는 표준에는 보안과 안정적인 데이터베이스 트랜잭션의 기본 속성인 원자성, 일관성, 격리성, 내구성(ACID)이 포함된다
-- 일반적인 웹 서비스 사양에는 다음이 포함된다
-    - 웹 서비스 보안(WS-Security): 토큰이라고 불리는 고유 식별자를 통해 메시지를 보호하고 전송하는 방식을 표준화한다
-    - WS-ReliableMessaging: 불안정한 IT인프라로 전송되는 메시지 간 오류 처리를 표준화 한다
-    - 웹 서비스 주소지정(WS-addressing): 심층 네트워크에 라이팅 정보를 유지관리하는 대신, SOAP 헤더 내에 메타데이터로 해당 정보를 패키징한다
-    - 웹 서비스 기술 언어(WSDL): 웹 서비스가 무엇을 하는지, 해당 서비스의 시작과 종료 위치를 기술한다
-- 데이터에 대한 요청이 SOAP API로 전송되는 경우 HTTP(웹 브라우저), SMTP(이메일), TCP 등의 다양한 애플리케이션 레이어 프로토콜을 통해 처리될 수 있습니다. 그러나 요청이 수신되면, 인간과
-  기계가 모두 읽을 수 있는 마크업 언어인 XML 문서 형식으로 반환 SOAP 메시지가 반환됩니다. SOAP API에 대한 완료된 요청은 브라우저에서 캐시할 수 없으므로, API로 재전송하지 않는 한 이후에
-  액세스할 수 없습니다.
+- SOAP라는 것은 SOA(Service Oriented Architecure)를 지원하기 위한 Protocol이다
+- 그렇다면 우리가 알아야 할것은 SOA가 어떤 구조로 되어있는지를 알아야 한다
+
+<img src = "img/7.png" width = "800" height = "300">
+
+### SOA의 구조
+
+- 모든 data가 XML로 표현되고 data와 data를 다루는 operation이 WSDL로 정의되면, UDDI에 등록되어 누구라도 service를 검색, 접근할 수 있도록 공개하는 구조이다
+- 사람들이 특정 서비스를 사용하고 싶은 경우 웹에 올라와 있는 UDDI에 가서 가져와서 사용한다
+
+#### WSDL(Web Service Description Language)
+
+<img src = "img/8.png" width = "800" height = "800">
+
+- 웹 서비스를 기술한 언어이며 XML로 작성되어 있다
+- 데어터와 데이터를 다루는 오퍼레이션 즉, 서비스를 WSDL이라는 포맷로 정의를 해준다
+- 즉 WSDL이라는 언어로 작성된 서비스 이다
+
+#### UDDI(Universal Description, Discovery and Integration)
+
+- WSDL이 저장된 웹 서비스 서장소
+
+### 한계
+
+- 복잡한 구조 -> http에서 전달되기 힘들다, WSDL이 복잡하고 무겁다
+- 접근이 힘들다 -> UDDI를 거쳐야만 사용할 수 있다
+
+## REST(REpresentational State Transfer)
+
+- 정의 : 자원의 표현에 의한 상태 전달
+    - 자원(resource)의 표현(representation) -> resource(사진, 음악, 글자 등 모든 것)의 이름
+    - 상태 전달 -> data가 요청되면 JSON혹은 XML로 전달되낟
+- 목적 : ROA를 구현하기 위한 규약
+    - ROA : Resource Oriented Architecture로 중간 매개체(ex.UDDI)가 없이 resource를 직접 주고 받는 architecture
+- 구성
+  - 자원 : 모든 자원은 고유한 ID(URI)가 존재하고, 서버에 저장된다
+  - 행위 : http method이다 (get, post, put, delete)
+  - 표현(Representational) : Client의 data요청에 Server가 응답한다. JSON, XML등의 형태
+- 특징
+  - Client-Server 구조
+  - Stateless -> http를 기반으로 하기에 REST역시 무상태성을 갖는다
+- 한계
+  - 표준이 없다
+  - 사용할 수 있는 method가 4개 뿐이다
+  - 때로는 RESTful하게 만드려고 method를 사용하여 속도가 느려질 수 있다 (get이 post보다 빠르기 때문)
+
+### RESTful이란?
+- 정의 : RESTful은 REST라는 아키텍처를 구현하는 웹 서비시를 나타내기 위해 사용되는 용어
+  - REST API를 제공하는 웹 서비스를 RESful하다고 할 수 있다
 
 ## SOAP와 REST의 차이
 
