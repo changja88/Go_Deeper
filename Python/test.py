@@ -1,14 +1,8 @@
-class Meta(type):
-    def __new__(meta, name, bases, class_dict):
-        print(meta)
-        print(name)
-        print(bases)
-        print(class_dict)
-        return type.__new__(meta, name, bases, class_dict)
+original = [1, 2, 3]
+new = list(original)
+print(original)
+print(new)
 
-
-class MyClass(metaclass=Meta):
-    stuff = 123
-
-    def foo(self):
-        ...
+original.append(45)
+print(new)
+print(original)
