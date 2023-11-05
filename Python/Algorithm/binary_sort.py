@@ -12,5 +12,5 @@ def binary_search(input: list[int], target, start_index, end_index):
         return binary_search(input, target, mid_index + 1, end_index)
 
 
-a = binary_search(sample, 2, 0, len(sample) - 1)
+a = binary_search(sample, 10, 0, len(sample) - 1)
 print(a)

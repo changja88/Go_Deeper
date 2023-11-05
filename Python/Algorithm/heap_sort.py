@@ -54,3 +54,4 @@ def heap_sort1(unsorted):
 
 
 heap_sort1(sample)
+print(sample)
