@@ -25,9 +25,9 @@
 |      테스트 주도 개발(캔트백)       | Noting Special | Here      |
 |        파이썬 코딩의 기술         |      Good      | Here      |
 |          단단한 파이썬          |      Good      | Here      |
-|        슬기로운 파이썬 트릭        |      Good      | Here      |
-|       파이썬 클린코드 2nd        |                |           |
+|        슬기로운 파이썬 트릭        | Noting Special | Here      |
 |         객체지향 파이썬          |                |           |
+|       파이썬 클린코드 2nd        |                |           |
 |     프로그래밍 패턴(Python)      |                |           |
 |   파이썬 비동기 라이브러리 Asyncio   |                |           |
 |       좋은 코드, 나쁜 코드        |                |           |
