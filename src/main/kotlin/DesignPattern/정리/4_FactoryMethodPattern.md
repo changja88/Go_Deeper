@@ -38,7 +38,7 @@ fun odrerPizza(type: String): Pizza {
 OCP  
 
 
-목적: 모든 팩토리 패턴의 목적은 객체 생성의 캡슐화 -> OCP  
+목적: 모든 팩토리 패턴의 목적은 객체 생성의 캡슐화 &rarr; OCP  
 팩토리 메소드 패턴에서는 서브클래스에서 어떤 클래스를 만들지를 결정하게 함으로써 객체 생성을 캡슐화 한다
 </blockquote>
 
@@ -98,7 +98,7 @@ class PizzaStore(val factory: SimplePizzaFactory) {
     * 문제상황(1) 해결책을 적용하면 NYPizzaFactory, ChicagoPizzaFactory ...등등을 계속 만들어야 한다
     * 즉 어떤 피자를 만들지 정하는(if문)곳이 변하는 부분이어서 capsulation을 시켰는데(simple factory) 이번에는 simple factory가 종류별로 필요해져서 변하는 부분이 되었음
 
-### 새로운 문제의 해결책 -> Factory Method Pattern 구현
+### 새로운 문제의 해결책 &rarr; Factory Method Pattern 구현
 
 ```mermaid
 classDiagram

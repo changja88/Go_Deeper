@@ -99,8 +99,8 @@ class C_Rubberduck{
 
 * OCP 원칙을 지키고 있지 않다
     * 달라지는 부분을 찾아내고, 달라지지 않는 부분으로 부터 분리 시켜야하지만 공존하고 있다
-    * 달라지는 부분 -> fly()
-    * 달라지지 않는 부분 -> swim(), display()
+    * 달라지는 부분 &rarr; fly()
+    * 달라지지 않는 부분 &rarr; swim(), display()
 
 </blockquote>
 
@@ -179,7 +179,7 @@ A_Duck <|-- C_Rubberduck : 상속
 
 * performFly()는 flyBehavior에게 행동을 위임한다
 * setFlyBehavior()을 통해서 동적으로 할당이 가능하다
-* A에게는 B가 있다 -> 오리에게는 FlyBehavior가 있다
+* A에게는 B가 있다 &rarr; 오리에게는 FlyBehavior가 있다
     * 즉 구성을 활용하고 있다 (composition)
 
 </blockquote>
