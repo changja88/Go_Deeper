@@ -288,4 +288,64 @@ def __iter__(self):
     - 이터러블 프로토콜이 작동하는 방식 때문이다
     - 간단한 해결 방법은 __iter__에서 self가 아니라 DateRangeIterable를 매번 새로 만들어서 반환하는 방법이 있다
     - 더 좋은 방법은 __iter__에서 제너레이터를 사용하는 방법이다
-    - 이러한 형태의 객체를 컨테이너 이터러블이라고 한다 
+  - 이러한 형태의 객체를 컨테이너 이터러블이라고 한다
+
+### 시퀀스 만들기
+
+```python
+class DateRangeSequence:
+  def __init__(self, start_date, end_date):
+    self.start_date = start_date
+    self.end_date = end_date
+    self._range = self._create_range()
+
+  def _create_range(self):
+    days = []
+    current_day = self.start_date
+    while current_day < self.end_date:
+      days.append(current_day)
+      current_day += timedelta(days=1)
+    return days
+
+  def __getitem__(self, day_no):
+    return self._range[day_no]
+
+  def __len__(self):
+    return len(self._range)
+```
+
+- __iter__가 정의되어 있지 않으면 __getiem__을 찾고 없으면 TypeError를 발생시킨다
+- 시퀀스는 __len__과 __getitem__을 구현하고 첫 번째 인덱스 0부터 시작하여 포함된 요소를 한 번에 하나씩 차례로 가져올 수 있어야 한다
+  - 즉 __getiem__을 구현해야한다
+- 시퀀스로 구현하면 더 많은 메모리가 사용되지만 특정 요소를 가져오기 위한 인덱싱의 시작복잡도는 상수시간에 가능하다
+
+## 컨테이너 객체
+
+- 컨테이너는 __contains__ 메서드를 구현한 객체로 __contains__ 메서드는 일반적으로 Boolean 값을 반환한다
+  - 이 메서드는 파이썬에서 in 키워드가 발견될 때 호출된다
+
+## 객체의 동적인 속성
+
+```python
+class DynamicAttributes:
+  def __init__(self, attribute):
+    self.attribute = attribute
+
+  def __getattr__(self, attr):
+    if attr.startwith("fallback_"):
+      name = attr.replace("falback_", "")
+      return f"[fallback resolved] {name}"
+    raise AttributeError(f"{self.__class__.__name__}ㅇㅔ는 {attr} 속성이 없음")
+```
+
+- __getattr__ 매직 메서드를 사용하면 객체가 속성에 접근하는 방법을 제어할 수 있다
+  - object.attribute 형태로 객체의 속성에 접금하려고 하면 파이썬은 객체 인스턴스의 속성(attribute)정보를 가지고 있는 __dict__ 사전에서 해당 attr에 있는지 검색한다
+  - 있는 경우 검색된 속성 객체에 대해서 __getattribute__ 메서드를 호출한다
+- __getattr__은 기본적으로 존재하지 않는 속성에 접근하려고 할 때 호출된다
+- 활용할 수 있는 곳이 많다
+  - 프록시를 만들때 활용할 수 있다
+    - 컴포지션을 통해 기존 객체의 위에서 동작하는 래퍼 객체를 만든다고 할 경우, 기존 객체에서 가져오려는 메서드를 래퍼 객체에 그대로 중복해서 복사하는 대신에, __getattr__ 메서드로 내부적으로
+      같은 이름의 메서드를 호출하도록 하면 쉽게 위임이 가능하다
+  - 동적으로 계산되는 속성 필요한 경우 활용 가능하다
+    - 중복 코드가 많이 발생하거나 보일러플레이트코드가 많은 경우 __getattr__ 매직 메서드를 활용할 수 있다
+    - 하지만 남용하면 가독성이 떨어지게 된다 
