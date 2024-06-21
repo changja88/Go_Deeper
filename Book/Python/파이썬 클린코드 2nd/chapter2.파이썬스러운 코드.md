@@ -96,7 +96,7 @@ def db_handeler():
         stop_database()
         yield
     finally:
-        stop_database()
+        start_database()
 
 
 with db_handeler():
