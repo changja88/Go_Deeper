@@ -567,6 +567,7 @@ class DescriptorClass:
 - 디스크립터는 데코레이터가 클래스 메서드에서도 동작할 수 있도록 도와 더 나은 데코레이터를 만들 수 있게 한다
 
 ### 클래스 데코레이터의 대안
+
 ```python
 @Serialization(
     username=show_original,
@@ -581,6 +582,7 @@ class LoginEvent:
     ip: str
     timestamp: datetime
 ```
+
 - 위 코드를 디스크립터로 변경할수 있는지 알아보자
 
 ```python
@@ -639,4 +641,181 @@ vars(le)  # {'username': 'john', 'password': 'secret password', 'ip': '1.1.1.1',
 le.serialize()  # {'username': 'john', 'password': '**redacted**', 'ip': '1.1.1.1', 'timestamp': '...'}
 le.password  # '**민감한 정보 삭제**'
 ```
+
 # 디스크립터 분석
+
+- 좋으 ㄴ디스크립터의 기준은 무엇을까?
+
+## 파이썬 내부에서의 디스크립터 활용
+
+- 훌륭한 예제를 살펴본다
+
+### 함수와 메서드
+
+- 함수는 __get__메서드를 구현했기 떄문에 클래스 안에서 메서드처럼 동작할 수 있다
+    - 파이썬에서 메서드는 추가 파라미터를 가진 함수일 뿐이다
+    - 관심적으로 메서드의 첫 번재 파라미터는 self라는 이름을 사용하여 메서드를 소유하고 있는 클래스의 인스턴스를 나타낸다
+    - 따라서 메서드에서 self를 사용하는 것은 객체를 받아서 수정을 하는 함수를 사용하는 것과 동일하다
+
+````python
+class MyClass:
+    def method(self, ...):
+        self.x = 1
+````
+
+따라사 위 코드는 실제로 아로 코드처럼 정의하는 것과 같다
+
+```python
+class MyClass: pass
+
+
+def method(myclass_instance: MyClass, ...):
+    myclass_instance.x = 1
+
+
+method(MyClass())
+```
+
+- 따라서 메서드는 객체를 수정하는 또 다른 함수일 뿐이며, 객체 안에서 정의도었기 떄문에 객체에 바인딩되어 있다고 말한다
+
+```python
+instance = MyClass()
+instance.method(...)
+```
+
+위와 같은 코드는 실제로는 아래 코드 처럼 파이썬은 처리한다
+
+```python
+instance = MyClass()
+MyClass.method(intance, ...)
+```
+
+```python
+def function: pass
+
+
+print(function.__get__)  # <method-wrapper '__get__' of fucntion object at 0X..>
+```
+
+- 함수는 디스크립터 프로토콜을 구현하였으므로 __get__메서드가 먼저 호출된다
+- instance.method(...)구문에서는 괄호 안의 인자를 처리하기 전에 instance.method 부분이 먼저 평가 된다
+    - method는 클래스 속성으로 정의된 객채이고 __get__메서드가 있기 떄문에 __get__메서드가 호출된다
+    - 그리고 __get__메서드가 하는 일은 메서드로 변환하는 것이다
+    - 즉 함수를 작업하려는 객체의 인스턴스에 바인딩 한다
+
+```python
+class Method:
+    def __init__(self, name):
+        self.name = name
+
+    def __call__(self, instance, arg1, arg2):
+        print(f"{self.name}: {instance} 호출됨. 인자는 {arg1}와 {arg2}입니다.")
+
+
+class MyClass:
+    method = Method("Internal call")
+
+
+instance = MyClass()
+Method("External call")(instance, "first", "second")
+instance.method("first", "second")  # 실패
+```
+
+- 위 코드는 외부에서 호출 가능한 형태의 함수 또는 메서드를 클래스 내에 호출 가능한 객체로 정의하 ㄴ것이다
+    - method 클래스의 인스턴스는 함수나 메서드 형태로 다른 클래스에서 사용될 것이다
+    - 따라서 Usage 부분에서 두 가지 호출은 동일한 역할을 해야 한다
+    - 하지만 에러가 발생한다
+
+```python
+from types import MethodType
+
+
+class Method:
+    def __init__(self, name):
+        self.name = name
+
+    def __call__(self, instance, arg1, arg2):
+        print(f"{self.name}: {instance} 호출됨. 인자는 {arg1}와 {arg2}입니다.")
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+        return MethodType(self, instance)
+
+
+# Usage
+instance = MyClass()
+Method("External call")(instance, "first", "second")
+instance.method("first", "second")  # 이제 성공
+```
+
+- 위 코드는 에러를 해결한 코드이다
+    - 이유는 파라미터 위치가 한 칸씩 밀려서 Method.__call__기준으로 self자리에 instance가 전달되고, instance 자리에 'first'가 전달....
+    - 이 문제를 해결 하려면 메서드를 디스크립터로 변경하면 된다
+    - 이렇게 하면 instance.method 호출 시 Method.__get__ 메서드를 먼저 호출할 것이다. 여기에서 첫 번째 파라미터로 Method의 인스턴스를 전달 함으로써 객체에 바인딩하면 된다
+    - MethodType을 사용하여 함수를 메서드로 변환하는 것이다. 두번째 파라미터는 이 함수에 바인딩할 객체이다
+- 파이썬의 함수 객체도 이것과 비슷하게 동작한다
+    - 따라서 클래스 내부에 함수를 정의할 경우 메서드처럼 사용할 수 있는 것이다
+
+### 메서드를 위한 빌트인 데코레이터
+
+```python
+class MyClass:
+    @property
+    def prop(self): pass
+
+
+print(MyClass.prop)  # <propoerty object at 0x...>
+```
+
+- @property, @classmethod, @staticmethod 데코레이터는 디스크립터이다
+- 메서드를 인스턴스가 아닌 클래스에서 직접 호출할 때는 관습적으로 디스크립터 자체를 반환한다
+- 프로퍼티를 클래스에서 직접 호출하면 계산할 속성이 없으므로 일종의 디스크립터인 프로퍼티 객체 자체를 반환한다
+- @classmethod를 사용하면 디스크립터의 __get__ 함수가 메서드를 인스턴스에서 호출하든 클래스에서 호출하든 산관없이 데코레이팅 함수에 첫 번째 파라미터로 메섣르르 소유한 클래스를 넘겨준다
+- @staticmethod를 사용하면 정의한 파리미터 이외의 파라미터를 넘기지 않도록 한다
+    - 즉 __get__ 메서드에서 함수의 첫 번째 파라미터에 self를 바인딩하는 작업을 취소한다
+
+### 슬롯(slots)
+
+- __slots__는 해당 클래스가 가질 수 있는 필드의 범위를 정의하는 클래스 속성이다
+- 이 속성을 사용해 앞으로 클래스에서 허용할 속성의 이름을 차례로 지정할 수 있다
+    - 그럼 그 순간부터는 해당 클래스의 인스턴스에 새로운 속성을 동적으로 추가할 수 없다
+    - AttributeError가 발생한다
+    - __slot__속성을 정의하면 클래스의 속성이 정적으로 되기 떄문에 __dict__속성을 갖지 않으므로 더 이상 동적으로 추가할 수 없다
+- 그럼 클래스 속성을 어디에서 가져올까?
+    - 디스크립터를 사용한다
+
+```python
+from dataclasses import dataclass
+
+
+@dataclass
+class Coordinate2D:
+    __slots__ = ("lat", "long")
+    lat: float
+    long: float
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.lat}, {self.long})"
+```
+
+## 데코레이터를 디스크립터로 구현하기
+
+- 데코레이터를 이런 형태로 만들기 위한 일반적인 방법은 __get__메서드를 구현하고 types.MethodType을 사용해 데코레이터 자체를 개체에 바인딩된 메서드로 만드는 것이다
+- 이렇게 하려면 데코레이터를 객체로 구현해야 한다
+    - 만약 함수로 구현하는 경우 __get__메서드가 이미 존재할 것이디 때문에 정상적으로 동작하지 ㅇ낳게 된다
+- 더 깔끔한 방법은 데코레이터를 위한 클래스를 정의하는 것이다
+
+# 디스크립터 최종 정리
+
+## 디스크립터에 대한 타입 어노테이션
+
+- 대부분의 경우 디스크립터에 타입 어노케이션을 추가하는 것은 어려운 일이다
+    - 순환 의존성 문제가 있을 수 있기 떄문이다
+    - 즉 디스크립터가 정의된 파일은 디스크립터를 사용하는 객체의 타입을 확인하기 위해 클라이언트 파일을 읽어야 하지만, 클라이언트 파일 역시 디스크립터가 정의된 파일을 읽어야 한다
+- 디스크립터가 타입 어노테이션을 추가할 수 있따는 말은 디스크립터가 한 가지 데이터 타입에대해서만 사용 가능하다는 뜻이다
+    - 일반적인 디스크립터의 목적과 상충되는 부분이다
+- 따라서 타입 어노테이션은 디스크립터의 경우에는 하지 않는 것이 더 간단한 선택일 수 있다
+
+# 요약
+- 메타프로그래밍에 가깝게 해주는 고급 기능이다
